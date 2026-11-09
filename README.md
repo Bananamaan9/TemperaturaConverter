@@ -1,19 +1,21 @@
 # TemperaturaConverter
 
-A desktop Fahrenheit → Celsius converter built with **C#**, **.NET 10**, and
+A desktop temperature converter built with **C#**, **.NET 10**, and
 **[MewUI](https://github.com/aprillz/MewUI)**.
 
 The app follows the Windows Forms tutorial `Conversor Fahrenheit → Celsius`,
-adapted to MewUI's fluent C# markup.
+adapted to MewUI's fluent C# markup, including all four suggested challenges.
 
 ## Features
 
-- Converts Fahrenheit (°F) to Celsius (°C)
-- Uses the formula `°C = (°F − 32) × 5 / 9`
-- Validates the input with `TryParse`
-- Rejects values below absolute zero (`-459.67 °F`)
-- `Converter` button and Enter-key shortcut
-- `Limpar` button that clears the form and returns focus to the input
+- Two conversion directions:
+  - Fahrenheit → Celsius: `°C = (°F − 32) × 5 / 9`
+  - Celsius → Fahrenheit: `°F = °C × 9 / 5 + 32`
+- Two `RadioButton`s select the direction and a single `Converter` button runs it
+- Input validation with `TryParse`
+- Rejects values below absolute zero
+- Enter-key shortcut for conversion
+- `Limpar` button clears the input and result and returns focus to the input
 - Result is blue below 0 °C and red above 30 °C
 - Culture-aware parsing and formatting: both `98.6` and `98,6` work
 
@@ -37,18 +39,22 @@ dotnet publish -c Release -r win-x64 -p:PublishAot=true
 
 | File | Purpose |
 | --- | --- |
-| `Program.cs` | MewUI window, controls, result colors, and event handling |
-| `TemperatureConverter.cs` | Parsing, validation, and Fahrenheit → Celsius conversion |
+| `Program.cs` | MewUI window, radio buttons, controls, result colors, and event handling |
+| `TemperatureConverter.cs` | Parsing, validation, and both conversion formulas |
 | `TemperaturaConverter.csproj` | .NET project and MewUI package reference |
 
 ## Example values
 
-| Fahrenheit | Celsius |
-| ---: | ---: |
-| 32 | 0.00 °C |
-| 212 | 100.00 °C |
-| -40 | -40.00 °C |
-| 98.6 | 37.00 °C |
+| Direction | Input | Result |
+| --- | ---: | ---: |
+| °F → °C | 32 | 0.00 °C |
+| °F → °C | 212 | 100.00 °C |
+| °F → °C | -40 | -40.00 °C |
+| °F → °C | 98.6 | 37.00 °C |
+| °C → °F | 0 | 32.00 °F |
+| °C → °F | 100 | 212.00 °F |
+| °C → °F | -40 | -40.00 °F |
+| °C → °F | 37 | 98.60 °F |
 
 ## Naming conventions
 
@@ -56,4 +62,4 @@ The project uses standard C# naming conventions:
 
 - `PascalCase` for types, methods, properties, and constants
 - `camelCase` for local variables and parameters
-- Descriptive names such as `fahrenheitTextBox`, `resultLabel`, and `errorMessage`
+- Descriptive names such as `inputTextBox`, `resultLabel`, and `errorMessage`

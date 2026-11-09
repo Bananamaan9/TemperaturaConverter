@@ -2,16 +2,26 @@ using System.Globalization;
 
 namespace TemperaturaConverter;
 
+internal enum ConversionDirection
+{
+    FahrenheitToCelsius,
+    CelsiusToFahrenheit
+}
+
 internal static class TemperatureConverter
 {
+    public const double CelsiusAbsoluteZero = -273.15;
     public const double FahrenheitAbsoluteZero = -459.67;
 
-    public static bool TryConvertFahrenheitToCelsius(
+    public static bool TryConvert(
         string text,
-        out double celsius,
+        ConversionDirection direction,
+        out double convertedValue,
+        out double celsiusValue,
         out string errorMessage)
     {
-        celsius = 0.0;
+        convertedValue = 0.0;
+        celsiusValue = 0.0;
         errorMessage = string.Empty;
 
         if (string.IsNullOrWhiteSpace(text))
@@ -20,27 +30,56 @@ internal static class TemperatureConverter
             return false;
         }
 
-        if (!TryParseFahrenheit(text, out double fahrenheit))
+        if (!TryParseNumber(text, out double value))
         {
             errorMessage = "Introduza um número válido.";
             return false;
         }
 
-        if (!double.IsFinite(fahrenheit))
+        if (!double.IsFinite(value))
         {
             errorMessage = "Introduza um número finito.";
             return false;
         }
 
-        if (fahrenheit < FahrenheitAbsoluteZero)
+        switch (direction)
         {
-            errorMessage =
-                "A temperatura não pode ser inferior ao zero absoluto " +
-                $"({FormatFahrenheit(FahrenheitAbsoluteZero)}).";
+            case ConversionDirection.FahrenheitToCelsius:
+                if (value < FahrenheitAbsoluteZero)
+                {
+                    errorMessage =
+                        "A temperatura não pode ser inferior ao zero absoluto " +
+                        $"({FormatFahrenheit(FahrenheitAbsoluteZero)}).";
+                    return false;
+                }
+
+                celsiusValue = (value - 32.0) * 5.0 / 9.0;
+                convertedValue = celsiusValue;
+                break;
+
+            case ConversionDirection.CelsiusToFahrenheit:
+                if (value < CelsiusAbsoluteZero)
+                {
+                    errorMessage =
+                        "A temperatura não pode ser inferior ao zero absoluto " +
+                        $"({FormatCelsius(CelsiusAbsoluteZero)}).";
+                    return false;
+                }
+
+                celsiusValue = value;
+                convertedValue = value * 9.0 / 5.0 + 32.0;
+                break;
+
+            default:
+                throw new ArgumentOutOfRangeException(nameof(direction));
+        }
+
+        if (!double.IsFinite(convertedValue))
+        {
+            errorMessage = "O valor convertido está fora do intervalo suportado.";
             return false;
         }
 
-        celsius = (fahrenheit - 32.0) * 5.0 / 9.0;
         return true;
     }
 
@@ -50,15 +89,15 @@ internal static class TemperatureConverter
     public static string FormatFahrenheit(double fahrenheit) =>
         $"{fahrenheit.ToString("F2", CultureInfo.CurrentCulture)} °F";
 
-    private static bool TryParseFahrenheit(string text, out double fahrenheit)
+    private static bool TryParseNumber(string text, out double value)
     {
         const NumberStyles numberStyles = NumberStyles.Float;
 
-        if (double.TryParse(text, numberStyles, CultureInfo.CurrentCulture, out fahrenheit))
+        if (double.TryParse(text, numberStyles, CultureInfo.CurrentCulture, out value))
         {
             return true;
         }
 
-        return double.TryParse(text, numberStyles, CultureInfo.InvariantCulture, out fahrenheit);
+        return double.TryParse(text, numberStyles, CultureInfo.InvariantCulture, out value);
     }
 }
