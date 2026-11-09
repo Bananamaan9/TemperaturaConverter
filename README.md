@@ -1,17 +1,21 @@
 # TemperaturaConverter
 
-A small desktop temperature converter built with **C#**, **.NET 10**, and
+A desktop Fahrenheit → Celsius converter built with **C#**, **.NET 10**, and
 **[MewUI](https://github.com/aprillz/MewUI)**.
+
+The app follows the Windows Forms tutorial `Conversor Fahrenheit → Celsius`,
+adapted to MewUI's fluent C# markup.
 
 ## Features
 
-- Converts between Celsius (°C), Fahrenheit (°F), and Kelvin (K)
-- Updates the result as you type or change units
-- Swap and reset buttons
-- Enter key shortcut for conversion
-- Rejects invalid numbers and values below absolute zero
-- Culture-aware number parsing and formatting
-- Light and dark theme support through the MewUI theme
+- Converts Fahrenheit (°F) to Celsius (°C)
+- Uses the formula `°C = (°F − 32) × 5 / 9`
+- Validates the input with `TryParse`
+- Rejects values below absolute zero (`-459.67 °F`)
+- `Converter` button and Enter-key shortcut
+- `Limpar` button that clears the form and returns focus to the input
+- Result is blue below 0 °C and red above 30 °C
+- Culture-aware parsing and formatting: both `98.6` and `98,6` work
 
 ## Requirements
 
@@ -33,24 +37,18 @@ dotnet publish -c Release -r win-x64 -p:PublishAot=true
 
 | File | Purpose |
 | --- | --- |
-| `Program.cs` | MewUI window, controls, and event handling |
-| `TemperatureConverter.cs` | Temperature units, parsing, validation, and conversion logic |
+| `Program.cs` | MewUI window, controls, result colors, and event handling |
+| `TemperatureConverter.cs` | Parsing, validation, and Fahrenheit → Celsius conversion |
 | `TemperaturaConverter.csproj` | .NET project and MewUI package reference |
 
-## Conversion formulas
+## Example values
 
-```text
-°F = (°C × 9/5) + 32
-K  = °C + 273.15
-```
-
-Absolute zero limits:
-
-```text
--273.15 °C
--459.67 °F
-0 K
-```
+| Fahrenheit | Celsius |
+| ---: | ---: |
+| 32 | 0.00 °C |
+| 212 | 100.00 °C |
+| -40 | -40.00 °C |
+| 98.6 | 37.00 °C |
 
 ## Naming conventions
 
@@ -58,4 +56,4 @@ The project uses standard C# naming conventions:
 
 - `PascalCase` for types, methods, properties, and constants
 - `camelCase` for local variables and parameters
-- Descriptive names such as `sourceUnitComboBox`, `targetValue`, and `errorMessage`
+- Descriptive names such as `fahrenheitTextBox`, `resultLabel`, and `errorMessage`
